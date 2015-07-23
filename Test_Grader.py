@@ -3,6 +3,7 @@
 # scores the answers and plots the results according to Q type.
 from decimal import *
 from pylab import *
+import os
 getcontext().prec = 2
 
 # this line imports the TOEIC answer key and test scores as a module.
@@ -47,35 +48,35 @@ def get_answer_key_and_answers():
 		students[lowerName] = name
 		studentAnswers[lowerName] = answers_to_dict(lowerName, answers)
 	
-	"""
-	addStudents = True
-	
-	while addStudents:
-		name = input('Enter the student\'s name. Type \'none\' to finish. \n')
-		lowerName = "".join(name.lower())
-		if lowerName == 'none':
-			addStudents = False
-			break
-		else:
-			answers = input('Enter the student\'s answers. \n')
-			answers = ''.join(answers.upper().split())
-			students[lowerName] = name
-			studentAnswers[lowerName] = answers_to_dict(lowerName, answers)
-	"""
-			
+		
 def print_scores(student):
 	name = students[student]
-	print('%s\'s score is:' % name, studentPercentage[student], '%')
-	print('%s\'s answers were: ' % name)
+	filename = name + '\'s Scores'
+	wDir = os.getcwd()
+	if not os.path.exists(wDir + '\Scores\\'):
+		os.mkdir(wDir + '\Scores\\')
+	f = open(wDir + "\Scores\\" + filename + '.txt', 'w')
+	line = ''.join(['%s\'s score is:' % name, str(studentPercentage[student]), '%'])
+	f.write(line)
+	f.write('\n')
+	f.write('%s\'s answers were: ' % name)
+	f.write('\n')
 	count = 1
 	for answer in studentAnswers[student]:
 		if count < 10:
-			print('   ', count, ': ', studentAnswers[student][answer])
+			line = ''.join(['   ', str(count), ': ', str(studentAnswers[student][answer])])
+			f.write(line)
+			f.write('\n')
 		elif count <100:
-			print('  ', count, ': ', studentAnswers[student][answer])
+			line = ''.join(['  ', str(count), ': ', str(studentAnswers[student][answer])])
+			f.write(line)
+			f.write('\n')
 		else:
-			print(' ', count, ': ', studentAnswers[student][answer])
+			line = ''.join([' ', str(count), ': ', str(studentAnswers[student][answer])])
+			f.write(line)
+			f.write('\n')
 		count += 1
+	f.close()
 
 def grade_answers(student):
 	studentScore = 0
@@ -127,7 +128,7 @@ def plot_by_question_type(qType):
     ylim(-15,+15), yticks([])
     savefig(qType['title'] + ' barchart.png', dpi=500, bbox_inches='tight')
         
-    show()		
+    #show()		
 	
 get_answer_key_and_answers()
 
